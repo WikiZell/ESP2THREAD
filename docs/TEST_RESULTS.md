@@ -54,6 +54,7 @@ Results:
 | Fresh second-unit provisioning | Pass | clean NVS boot produced unique `ESP-ThreadBR-88ED`, branded setup portal at `192.168.4.1`, one-pulse LED status and stable LAN hostname `esp2thread-8e88ec.local` |
 | Additional-router dataset join | Pass | dataset moved directly in memory from `esp2thread-8f9ee4` to `esp2thread-8e88ec` without log, URL or file exposure; exact dataset equality was checked privately and the second unit attached as `child` |
 | Two-router Home Assistant integration | Pass | Home Assistant 2026.8.3 reports two OpenThread Border Router entries, Thread and Matter as `loaded` |
+| Preferred-network UI validation | Pass | Home Assistant Thread page shows one preferred `ESP-BR-9EE4` network containing both uniquely named ESP2THREAD border routers; no dataset or key material was captured |
 | Bidirectional border-router failover | Pass | with COM3 offline, COM4 progressed through `detached` to `leader`; with COM4 offline, COM3 remained attached and became `leader` after about 50 seconds; both restored as `leader` plus `child` |
 | Release-candidate automated gates | Pass | 13 repository/security/documentation tests, link checks, whitespace checks and full ESP-IDF 5.5.4 build pass for version `0.1.0-rc.1` |
 | Sequential release-candidate update | Pass | COM3 and COM4 were updated one at a time without writing NVS; both preserved Wi-Fi and dataset, report version `0.1.0-rc.1`, and restored as `leader` plus `router` |
