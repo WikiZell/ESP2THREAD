@@ -34,9 +34,16 @@ idf.py build
 ```
 
 The build must fit the two 1792 KiB application slots and 4 MB flash before it
-is eligible for hardware testing. The first build fits, but only has about
-50 KiB of application-slot headroom. Reducing that footprint is tracked before
-stable release.
+is eligible for hardware testing. The hardware-tested footprint configuration
+produces a `0x1a8e80`-byte application with `0x17180` bytes (about 94 KiB) free
+in each application slot.
+
+The Espressif border-router web and Wi-Fi support currently requires both
+`CONFIG_OPENTHREAD_CLI` and `CONFIG_OPENTHREAD_CLI_ESP_EXTENSION`. Disabling
+the OpenThread CLI while leaving the extension enabled fails at link time, so
+both remain enabled. Unused features that can be disabled independently are
+the OpenThread iPerf command, mDNS console commands, SRP client and DNS client.
+The web API also selects commissioner and joiner support.
 
 ## Flashing safety
 

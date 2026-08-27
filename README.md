@@ -40,8 +40,10 @@ The first native-radio firmware builds and boots successfully on the 4 MB XIAO
 ESP32-C6. Wi-Fi provisioning, Thread network creation, reboot recovery, the
 OpenThread REST API, MeshCoP advertisement and Home Assistant dataset import
 have passed hardware tests. Home Assistant marks the imported network
-preferred. Automatic create/join role selection, additional routers and Matter
-commissioning remain incomplete, so no release image is published.
+preferred. A first production-footprint pass also passed on-device regression
+testing and leaves about 94 KiB free in each OTA slot. Automatic create/join
+role selection, additional routers and Matter commissioning remain incomplete,
+so no release image is published.
 
 Follow the [hardware-tested setup guide](docs/SETUP.md), and see the
 [roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md) and

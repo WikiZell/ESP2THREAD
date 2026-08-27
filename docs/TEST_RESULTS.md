@@ -39,11 +39,14 @@ Results:
 | Home Assistant Thread import | Pass | Thread integration loaded one dataset sourced from `otbr` and marked it preferred; key material was not printed |
 | Automatic Home Assistant offer | Inconclusive | standard mDNS was visible, but automatic OTBR entry creation was not observed; manual URL setup passed |
 | Onboard status LED | Pass | GPIO15 active-low driver reported Wi-Fi disconnected at boot, Thread forming after IP at 17 seconds, and border-router ready at 53 seconds; REST remained `leader` and both Home Assistant integrations stayed loaded |
+| Production footprint configuration | Pass | unused iPerf, mDNS-console, SRP-client and DNS-client features disabled; image reduced from `0x1b4300` to `0x1a8e80` and OTA-slot headroom increased from `0xbd00` to `0x17180` bytes |
+| Footprint firmware hardware regression | Pass | flash hashes verified on `COM3` without writing the NVS partition; saved Wi-Fi identity returned immediately and Thread progressed from `detached` to `leader` after 15 seconds of polling |
+| Home Assistant regression after footprint build | Pass | Home Assistant 2026.8.3 continued to report the OpenThread Border Router, Thread and Matter config entries as `loaded` |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
 
-The application currently uses 97% of each OTA slot. This is acceptable for
-the first hardware experiment but not for a stable release; footprint reduction
-is an explicit release requirement.
+The application currently uses 95% of each OTA slot. The first conservative
+footprint pass recovered about 46 KiB of additional space. Create/join workflow
+code must continue to pass the partition-size gate as it is added.
 
 The complete pre-flash backup is intentionally excluded from Git. A full flash
 image may contain credentials and must never be attached to an issue or release.
