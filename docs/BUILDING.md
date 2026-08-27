@@ -44,9 +44,23 @@ Do not erase or flash a board until its complete 4 MB flash has been backed up.
 Backups can contain Wi-Fi and Thread credentials, so keep them outside Git and
 never attach them to a public issue.
 
-The connected test board uses native USB on `COM3`; ports vary by system.
-Hardware-tested flash commands will be added after the backup and first-boot
-recovery path are verified.
+The connected test board uses native USB on `COM3`; ports vary by system. After
+the full-flash backup has been verified, flash from an ESP-IDF v5.5.4 shell:
+
+```powershell
+idf.py -p COM3 flash
+idf.py -p COM3 monitor
+```
+
+The first hardware flash was verified on a XIAO ESP32-C6 revision 0.2. The
+bootloader, partition table, OTA metadata, application and web filesystem all
+passed esptool's on-device hash verification. The first boot then completed
+without a crash or reset loop and exposed the setup portal at
+`http://192.168.4.1`.
+
+To restore the board, write the private 4 MB backup at offset `0x0` using the
+same detected 4 MB flash size. Keep the backup path out of shared command logs,
+documentation and issue reports.
 
 ## Upstream source
 

@@ -20,8 +20,13 @@ Results:
 | Partition layout | Pass | final partition ends at `0x400000` on 4 MB flash |
 | Application fit | Pass with warning | image `0x1b3540`, 1792 KiB slot, `0xcac0` bytes free |
 | Web filesystem fit | Pass | 384 KiB SPIFFS image generated |
-| Hardware backup | Pending | required before first flash |
-| First boot and setup access point | Pending | board not flashed yet |
+| Hardware backup | Pass | complete 4,194,304-byte image saved outside Git and SHA-256 verified before flashing |
+| Flash write/verification | Pass | bootloader, partitions, OTA data, application and web filesystem all passed on-device hash verification on `COM3` |
+| First boot | Pass | clean ESP-IDF 5.5.4 boot with no crash or reset loop during a 20-second serial capture |
+| OpenThread initialization | Pass | native-radio OpenThread interface attached successfully with host connection mode `none` |
+| Wi-Fi/Thread coexistence | Pass | station plus SoftAP mode initialized with software coexistence enabled |
+| Setup access point | Pass | unique `ESP-ThreadBR-9EE5` SSID started with DHCP and setup portal at `http://192.168.4.1` |
+| Setup portal interaction | Pending | requires connecting a client to the temporary access point |
 | Home Assistant REST integration | Pending | requires running firmware |
 | mDNS discovery | Pending | requires running firmware and Home Assistant |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
@@ -30,3 +35,5 @@ The application currently uses 97% of each OTA slot. This is acceptable for
 the first hardware experiment but not for a stable release; footprint reduction
 is an explicit release requirement.
 
+The complete pre-flash backup is intentionally excluded from Git. A full flash
+image may contain credentials and must never be attached to an issue or release.
