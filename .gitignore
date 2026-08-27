@@ -1,0 +1,25 @@
+# ESP-IDF build products
+build/
+sdkconfig
+sdkconfig.old
+dependencies.lock
+managed_components/
+
+# Python and test caches
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local credentials and exports
+.env
+*.secret
+*.dataset
+*.bin
+!release/*.bin
+
