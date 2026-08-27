@@ -6,6 +6,7 @@
 #include "sdkconfig.h"
 
 #include "border_router_launch.h"
+#include "device_identity.h"
 #include "esp_check.h"
 #include "esp_err.h"
 #include "esp_event.h"
@@ -18,12 +19,12 @@
 #include "esp_spiffs.h"
 #include "esp_vfs_eventfd.h"
 #include "esp_br_web.h"
+#include "factory_reset.h"
 #include "mdns.h"
 #include "nvs_flash.h"
 #include "status_led.h"
 
 #define TAG "esp2thread"
-#define ESP2THREAD_HOSTNAME "esp2thread"
 #define WEB_MOUNT_POINT "/spiffs"
 
 static esp_err_t init_nvs(void)
@@ -64,14 +65,16 @@ void app_main(void)
 
     ESP_ERROR_CHECK(esp_vfs_eventfd_register(&eventfd_config));
     ESP_ERROR_CHECK(init_nvs());
+    ESP_ERROR_CHECK(esp2thread_factory_reset_start());
+    ESP_ERROR_CHECK(esp2thread_device_identity_init());
     ESP_ERROR_CHECK(init_web_storage());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(esp2thread_status_led_start());
     ESP_ERROR_CHECK(mdns_init());
-    ESP_ERROR_CHECK(mdns_hostname_set(ESP2THREAD_HOSTNAME));
+    ESP_ERROR_CHECK(esp2thread_device_identity_apply_mdns());
 
-    ESP_LOGI(TAG, "Starting ESP2THREAD single-chip border router");
+    ESP_LOGI(TAG, "Starting %s single-chip border router", esp2thread_device_hostname());
     esp_br_web_start(WEB_MOUNT_POINT);
     launch_openthread_border_router(&openthread_config, NULL);
 }

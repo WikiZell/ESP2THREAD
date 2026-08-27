@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "esp_check.h"
+#include "device_identity.h"
 #include "esp_log.h"
 #include "esp_netif.h"
 #include "esp_openthread.h"
@@ -91,6 +92,9 @@ static void ot_br_init(void *context)
             esp_restart();
         }
     }
+
+    /* Apply the unique hostname to this netif for DHCP renewals and diagnostics. */
+    ESP_ERROR_CHECK(esp2thread_device_identity_apply_netif(get_example_netif()));
 #elif CONFIG_EXAMPLE_CONNECT_ETHERNET
     ESP_ERROR_CHECK(example_ethernet_connect());
 #endif

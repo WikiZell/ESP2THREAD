@@ -6,6 +6,10 @@ small network appliance: provision Wi-Fi, create the first Thread network,
 add the router to Home Assistant, then copy the same Thread dataset to
 additional ESP2THREAD units.
 
+Each unit derives a unique local name from its factory MAC address, such as
+`esp2thread-8f9ee4.local`, so several routers can share one LAN without name
+collisions.
+
 > [!IMPORTANT]
 > The ESP32-C6 has one shared 2.4 GHz RF path. Wi-Fi and IEEE 802.15.4 cannot
 > receive simultaneously. Espressif supports this single-chip configuration,
@@ -52,6 +56,11 @@ Follow the [hardware-tested setup guide](docs/SETUP.md), and see the
 
 The onboard LED provides local status without a serial console. See the
 [status LED reference](docs/LED_STATUS.md) for its patterns.
+
+Holding the physical BOOT button for eight continuous seconds requests a
+factory reset. The firmware restarts into a safe erase step and removes both
+Wi-Fi and OpenThread configuration; a short press cancels without changing
+stored state.
 
 ## Foundations
 

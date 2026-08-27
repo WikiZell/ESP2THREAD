@@ -15,6 +15,7 @@
 #include "esp_openthread.h"
 #include "esp_openthread_lock.h"
 #include "esp_wifi.h"
+#include "factory_reset.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "nvs.h"
@@ -143,6 +144,11 @@ static void status_led_task(void *context)
     bool wifi_configured = wifi_is_configured();
 
     while (true) {
+        if (esp2thread_factory_reset_pending()) {
+            vTaskDelay(pdMS_TO_TICKS(STATUS_LED_TICK_MS));
+            continue;
+        }
+
         // During first setup, retry the read-only NVS check once per LED cycle.
         // Once configured it remains cached until reboot, avoiding repeated
         // flash reads during normal operation.

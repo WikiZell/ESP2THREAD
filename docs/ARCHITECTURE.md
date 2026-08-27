@@ -76,6 +76,20 @@ URLs, and never written to ordinary logs. Dataset presence itself is the
 persistent role-selection state: no parallel application copy of the secret is
 stored.
 
+## Multi-unit identity and recovery
+
+Every unit derives `esp2thread-xxxxxx` from the final three bytes of its base
+MAC address. The same stable identifier is used for mDNS, the mDNS instance
+name and the Wi-Fi station netif hostname. This avoids the fixed-name collision
+that would otherwise make a second border router ambiguous on the LAN.
+
+Factory reset has no web endpoint. A low-priority monitor requires GPIO9
+(BOOT) to remain low for eight continuous seconds. Confirmation is stored only
+in RTC memory and causes a software restart; NVS is erased early on the next
+boot before Wi-Fi or OpenThread opens persistent handles. Wi-Fi and Thread
+state are therefore cleared together without erasing either OTA application
+slot or the web filesystem.
+
 ## Upstream strategy
 
 ESP-IDF v5.5.4 is the initial supported toolchain. The Espressif Thread Border

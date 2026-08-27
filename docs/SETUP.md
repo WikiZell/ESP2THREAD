@@ -13,14 +13,17 @@ board never creates a Thread network until the user explicitly chooses
 4. Select the home 2.4 GHz Wi-Fi network, enter its password and save.
 5. Wait for the setup network to disappear.
 
-The device hostname is `esp2thread.local`. If local-name resolution is not
-available, find its DHCP address in the router. Keep the password out of serial
-logs, screenshots, issue reports and repository files.
+Each device has a unique hostname derived from its factory MAC address, for
+example `esp2thread-8f9ee4.local`. The last six characters distinguish units
+and remain stable across firmware updates and factory resets. If local-name
+resolution is unavailable, find the matching hostname or MAC address in the
+router's DHCP clients. Keep the password out of serial logs, screenshots,
+issue reports and repository files.
 
 ## 2. Choose the Thread role
 
-After Wi-Fi connects, open `http://esp2thread.local/setup.html` (or use the
-DHCP address).
+After Wi-Fi connects, open `http://esp2thread-xxxxxx.local/setup.html`, replacing
+`xxxxxx` with that unit's six-character suffix (or use its DHCP address).
 
 For the first ESP2THREAD:
 
@@ -48,7 +51,7 @@ router is configured.
 
 ## 3. Wait for Thread attachment
 
-Open `http://esp2thread.local/node/state`. A fresh single-router network first
+Open `http://esp2thread-xxxxxx.local/node/state`. A fresh single-router network first
 reports `detached` and then changes to `leader`. The tested unit recovered its
 Wi-Fi connection and leader role 44 seconds after a controlled reboot. Weak
 2.4 GHz signal can extend this time; move the board closer to the access point
@@ -61,7 +64,7 @@ network key and commissioner credential.
 
 1. Open **Settings > Devices & services**.
 2. Add **OpenThread Border Router**.
-3. Enter `http://esp2thread.local:80`. Use the DHCP address if `.local` name
+3. Enter `http://esp2thread-xxxxxx.local:80`. Use the DHCP address if `.local` name
    resolution is unavailable from Home Assistant.
 4. Confirm that both **OpenThread Border Router** and **Thread** show as loaded.
 5. In the Thread integration, confirm the ESP-created network is preferred.
@@ -74,6 +77,20 @@ The tested Home Assistant 2026.8.3 installation accepted the REST URL, imported
 the active dataset from the ESP and marked it preferred. Standard MeshCoP mDNS
 advertising was visible, but automatic creation of the OpenThread Border Router
 entry was not observed; the manual URL remains the tested fallback.
+
+## Factory reset
+
+Keep the unit powered and hold its physical **BOOT** button continuously for
+eight seconds. The onboard LED blinks rapidly during the countdown. Releasing
+the button early cancels the operation. After a complete hold, the unit
+restarts, erases the NVS partition before network services start, restarts
+again, and returns to Wi-Fi setup.
+
+This deliberately removes both saved Wi-Fi credentials and the active Thread
+dataset. Export the dataset from another working border router first if this
+is the only copy needed to add replacement routers. Do not hold BOOT while
+applying power; GPIO9 is also the ESP32-C6 ROM download-mode strap. Start the
+unit normally, then hold BOOT after it is running.
 
 ## Current limitations
 

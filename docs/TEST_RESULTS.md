@@ -45,12 +45,18 @@ Results:
 | Explicit Create/Join foundation | Pass | a fresh-board code path no longer calls automatic dataset creation; the hardware-served setup page offers Create and full-dataset Join, with dataset import in an HTTP body rather than a URL |
 | Existing-network upgrade path | Pass | Create/Join firmware flashed without writing NVS, preserved the commissioned dataset and returned the test unit to `leader`; the normal root URL remained on the dashboard |
 | Setup-page browser QA | Pass | hardware-served page identity, meaningful DOM, Create/Join controls, invalid-dataset rejection and desktop layout passed; no browser console warning or error was observed |
+| Multi-unit identity build | Pass | base-MAC-derived mDNS instance, hostname and station-netif hostname compile in the production image; 12 repository tests pass |
+| Unique-name hardware regression | Pass | existing unit preserved NVS, resolved at `esp2thread-8f9ee4.local`, served HTTP 200 and returned from `detached` to `leader` |
+| Unique-name browser QA | Pass | dashboard and configured-router setup page loaded through the new `.local` name with zero browser warnings or errors; dataset-copy control was not activated |
+| Factory-reset safety path | Partial pass | normal boot with GPIO9 released preserved Wi-Fi and Thread state; destructive eight-second erase and short-press cancellation intentionally remain untested on the commissioned unit |
+| Home Assistant identity regression | Pass | OpenThread Border Router, Thread and Matter config entries all remained `loaded` after the hostname firmware update |
 | Additional-router join and failover | Pending | requires a second XIAO ESP32-C6; do not claim multi-router validation from the single-board test |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
 
-The application currently uses 95% of each OTA slot. The first conservative
-footprint pass recovered about 46 KiB of additional space. Create/join workflow
-code must continue to pass the partition-size gate as it is added.
+The application currently uses about 95% of each OTA slot. After multi-unit
+identity and recovery support, `esp2thread.bin` is `0x1a9b10` bytes and leaves
+`0x164f0` bytes (about 89 KiB) in each 1792 KiB OTA slot. New features must
+continue to pass the partition-size gate.
 
 The complete pre-flash backup is intentionally excluded from Git. A full flash
 image may contain credentials and must never be attached to an issue or release.

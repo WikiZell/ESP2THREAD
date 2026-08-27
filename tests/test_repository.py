@@ -136,3 +136,31 @@ def test_xiao_status_led_is_active_low_gpio15():
     assert "LED_STATUS_THREAD_SELECTION" in source
     assert "LED_STATUS_THREAD_FORMING" in source
     assert "LED_STATUS_READY" in source
+
+
+def test_each_router_uses_a_mac_derived_identity():
+    identity = (ROOT / "components" / "device_identity" / "device_identity.c").read_text(encoding="utf-8")
+    launcher = (
+        ROOT / "components" / "thread_border_router" / "src" / "border_router_launch.c"
+    ).read_text(encoding="utf-8")
+    main = (ROOT / "main" / "esp2thread_main.c").read_text(encoding="utf-8")
+
+    assert "esp_read_mac(mac, ESP_MAC_BASE)" in identity
+    assert '"esp2thread-%02x%02x%02x"' in identity
+    assert "mdns_hostname_set(s_hostname)" in identity
+    assert "mdns_instance_name_set(s_instance_name)" in identity
+    assert "esp2thread_device_identity_apply_netif(get_example_netif())" in launcher
+    assert 'ESP2THREAD_HOSTNAME "esp2thread"' not in main
+
+
+def test_factory_reset_requires_physical_eight_second_hold():
+    source = (ROOT / "main" / "factory_reset.c").read_text(encoding="utf-8")
+
+    assert "#define FACTORY_RESET_GPIO GPIO_NUM_9" in source
+    assert "#define FACTORY_RESET_ACTIVE_LEVEL 0" in source
+    assert "#define FACTORY_RESET_HOLD_MS 8000" in source
+    assert "gpio_get_level(FACTORY_RESET_GPIO)" in source
+    assert "nvs_flash_deinit()" in source
+    assert "nvs_flash_erase()" in source
+    assert "FACTORY_RESET_RTC_MAGIC" in source
+    assert "esp_restart()" in source

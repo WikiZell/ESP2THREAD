@@ -31,6 +31,8 @@ Every push must check:
 - Network name, channel and dataset persist after reboot.
 - Factory reset requires a deliberate action and clears both Wi-Fi and Thread
   state.
+- A short BOOT press cancels without changing NVS; an eight-second hold is the
+  only physical reset trigger.
 
 ### Home Assistant
 
@@ -52,6 +54,7 @@ Every push must check:
 
 - Export the first router's dataset without logging it.
 - Import it into a second router.
+- Confirm both routers advertise different MAC-derived local hostnames.
 - Confirm both attach to the same Thread partition and do not create a split
   network.
 - Remove each router in turn and verify the remaining border path.
