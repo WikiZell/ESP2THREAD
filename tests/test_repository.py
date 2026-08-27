@@ -183,3 +183,18 @@ def test_release_version_and_redacted_support_bundle():
     assert "Thread datasets, keys, PSKc" in about
     assert "OpenThread:PSKc" not in dashboard
     assert "p-pskc" not in dashboard
+
+
+def test_flashing_guide_matches_release_layout_and_preserves_nvs():
+    guide = (ROOT / "docs" / "UPDATING.md").read_text(encoding="utf-8")
+
+    assert "ESP2THREAD-factory.bin" in guide
+    assert "0x0 ESP2THREAD-factory.bin" in guide
+    assert "0x0 bootloader.bin" in guide
+    assert "0x8000 partition-table.bin" in guide
+    assert "0xf000 ota-data-initial.bin" in guide
+    assert "0x20000 esp2thread.bin" in guide
+    assert "0x3a0000 web-storage.bin" in guide
+    assert "0x9000` through `0xefff" in guide
+    assert "Never add `erase_flash`" in guide
+    assert "No Home Assistant restart is required" in guide

@@ -55,9 +55,9 @@ Follow the [hardware-tested setup guide](docs/SETUP.md), and see the
 [roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md) and
 [current results](docs/TEST_RESULTS.md).
 
-For day-to-day use, follow the dedicated [Home Assistant guide](docs/HOME_ASSISTANT.md),
-[device and IKEA compatibility guide](docs/DEVICES.md), and
-[firmware update guide](docs/UPDATING.md).
+For day-to-day use, follow the dedicated [flashing and update guide](docs/UPDATING.md),
+[Home Assistant guide](docs/HOME_ASSISTANT.md), and
+[device and IKEA compatibility guide](docs/DEVICES.md).
 
 The onboard LED provides local status without a serial console. See the
 [status LED reference](docs/LED_STATUS.md) for its patterns.

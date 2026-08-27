@@ -61,6 +61,7 @@ Results:
 | Release-candidate browser QA | Pass | branded About page, embedded version, redacted-diagnostics control and dashboard without displayed PSKc passed; zero browser warning/error messages |
 | Matter device commissioning | Pass (user confirmed) | end devices paired successfully through Home Assistant after the preferred two-router Thread network was synchronized; exact product models and setup codes were not recorded |
 | Stable `v0.1.0` hardware regression | Pass | full ESP-IDF build and sequential verified flashes completed without writing NVS; both routers report `0.1.0` and restored as `leader` plus `router` |
+| Published flashing-guide validation | Pass | all `v0.1.0` release asset checksums passed; documented component offsets reconstructed the exact published 4 MB factory image with esptool 4.12.0 without accessing either router |
 
 The application currently uses about 95% of each OTA slot. After multi-unit
 identity and recovery support, `esp2thread.bin` is `0x1a9b10` bytes and leaves
