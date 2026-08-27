@@ -22,7 +22,7 @@ additional ESP2THREAD units.
 - Native USB Serial/JTAG
 - 2.4 GHz Wi-Fi 6 and IEEE 802.15.4 Thread radio
 
-## Planned setup flow
+## Target setup flow
 
 1. Flash the same ESP2THREAD image to every supported board.
 2. On first boot, connect to the temporary ESP2THREAD setup access point.
@@ -36,12 +36,15 @@ additional ESP2THREAD units.
 
 ## Project status
 
-The first native-radio firmware foundation builds and boots successfully on
-the 4 MB XIAO ESP32-C6. The branded first-boot setup network, portal and Wi-Fi
-scanner have passed hardware tests, and Espressif's OpenThread REST-compatible
-web server is compiled in. Home Wi-Fi provisioning, Home Assistant discovery
-and Matter commissioning have not passed yet, so no release image is published. See
-[the roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md) and
+The first native-radio firmware builds and boots successfully on the 4 MB XIAO
+ESP32-C6. Wi-Fi provisioning, Thread network creation, reboot recovery, the
+OpenThread REST API, MeshCoP advertisement and Home Assistant dataset import
+have passed hardware tests. Home Assistant marks the imported network
+preferred. Automatic create/join role selection, additional routers and Matter
+commissioning remain incomplete, so no release image is published.
+
+Follow the [hardware-tested setup guide](docs/SETUP.md), and see the
+[roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md) and
 [current results](docs/TEST_RESULTS.md).
 
 ## Foundations

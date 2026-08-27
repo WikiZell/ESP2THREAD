@@ -14,7 +14,7 @@ Results:
 
 | Test | Result | Evidence |
 | --- | --- | --- |
-| Repository documentation tests | Pass | 6 tests passed locally before the firmware build |
+| Repository documentation tests | Pass | 7 tests passed locally after the branded portal change |
 | Dependency resolution | Pass | ESP-IDF resolved and locked nine dependencies |
 | Native ESP32-C6 build | Pass | `esp2thread.bin` generated successfully |
 | Partition layout | Pass | final partition ends at `0x400000` on 4 MB flash |
@@ -30,8 +30,14 @@ Results:
 | ESP2THREAD portal branding | Pass | hardware-served title and heading identify ESP2THREAD; inherited M5Stack branding is absent |
 | Wi-Fi scan endpoint | Pass | `/scan` returned seven AP records containing only SSID, signal strength and authentication mode fields |
 | Complete management web UI image | Pass | all upstream status, network, topology, commissioning, address, tool and about pages are packaged with the branded setup page |
-| Home Assistant REST integration | Pending | requires running firmware |
-| mDNS discovery | Pending | requires running firmware and Home Assistant |
+| Home Wi-Fi provisioning | Pass | credentials saved privately; device obtained DHCP address and became reachable as `esp2thread.local` |
+| REST compatibility | Pass | node, state, network, border-agent, diagnostics and active-dataset routes returned HTTP 200; dataset content stayed redacted in test output |
+| Thread network creation | Pass | first unit created a random active dataset and formed a single-router partition as `leader` |
+| Reboot persistence | Pass | saved Wi-Fi and Thread state survived a controlled reboot; REST became reachable after 11 seconds and Thread returned to `leader` after 44 seconds |
+| MeshCoP mDNS advertisement | Pass | `_meshcop._udp.local` advertised `esp2thread`, the LAN addresses, Border Agent port and standard TXT fields |
+| Home Assistant REST integration | Pass | Home Assistant 2026.8.3 loaded the `otbr` entry using the local REST URL |
+| Home Assistant Thread import | Pass | Thread integration loaded one dataset sourced from `otbr` and marked it preferred; key material was not printed |
+| Automatic Home Assistant offer | Inconclusive | standard mDNS was visible, but automatic OTBR entry creation was not observed; manual URL setup passed |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
 
 The application currently uses 97% of each OTA slot. This is acceptable for
@@ -41,6 +47,12 @@ is an explicit release requirement.
 The complete pre-flash backup is intentionally excluded from Git. A full flash
 image may contain credentials and must never be attached to an issue or release.
 
-The setup portal was tested without submitting home Wi-Fi credentials. That
-submission must be performed privately by the owner; test output must not print
-the password or the resulting Thread operational dataset.
+The home Wi-Fi password was submitted privately through the local portal and
+was never printed or committed. Thread dataset retrieval was verified only by
+HTTP status, size and Home Assistant metadata; network keys and PSKc remained
+redacted.
+
+The test board initially measured approximately -90 dBm Wi-Fi signal and needed
+one reconnect attempt after reboot. It subsequently reached the REST API and
+held `leader` state. Better placement and longer coexistence testing remain
+required before release.

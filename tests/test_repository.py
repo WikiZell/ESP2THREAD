@@ -12,6 +12,7 @@ def test_required_documentation_exists():
         "docs/ARCHITECTURE.md",
         "docs/BUILDING.md",
         "docs/ROADMAP.md",
+        "docs/SETUP.md",
         "docs/TEST_PLAN.md",
         "docs/TEST_RESULTS.md",
         "pytest.ini",
