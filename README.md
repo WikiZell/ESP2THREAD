@@ -36,9 +36,12 @@ additional ESP2THREAD units.
 
 ## Project status
 
-The repository is in the architecture and hardware-validation stage. No
-release image is ready yet. See [the roadmap](docs/ROADMAP.md) and
-[test plan](docs/TEST_PLAN.md).
+The first native-radio firmware foundation builds successfully for the 4 MB
+XIAO ESP32-C6. It includes first-boot Wi-Fi provisioning and Espressif's
+OpenThread REST-compatible web server. Hardware flashing, Home Assistant
+discovery and Matter commissioning have not passed yet, so no release image is
+published. See [the roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md)
+and [current results](docs/TEST_RESULTS.md).
 
 ## Foundations
 
@@ -61,4 +64,3 @@ bug reports. See [SECURITY.md](SECURITY.md).
 
 ESP2THREAD project code and documentation are licensed under Apache-2.0.
 Third-party submodules retain their own licenses.
-
