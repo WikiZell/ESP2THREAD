@@ -20,6 +20,7 @@
 #include "esp_br_web.h"
 #include "mdns.h"
 #include "nvs_flash.h"
+#include "status_led.h"
 
 #define TAG "esp2thread"
 #define ESP2THREAD_HOSTNAME "esp2thread"
@@ -66,6 +67,7 @@ void app_main(void)
     ESP_ERROR_CHECK(init_web_storage());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+    ESP_ERROR_CHECK(esp2thread_status_led_start());
     ESP_ERROR_CHECK(mdns_init());
     ESP_ERROR_CHECK(mdns_hostname_set(ESP2THREAD_HOSTNAME));
 

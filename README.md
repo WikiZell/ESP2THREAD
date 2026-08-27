@@ -47,6 +47,9 @@ Follow the [hardware-tested setup guide](docs/SETUP.md), and see the
 [roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md) and
 [current results](docs/TEST_RESULTS.md).
 
+The onboard LED provides local status without a serial console. See the
+[status LED reference](docs/LED_STATUS.md) for its patterns.
+
 ## Foundations
 
 ESP2THREAD is based on:

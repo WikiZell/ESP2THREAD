@@ -11,6 +11,7 @@ def test_required_documentation_exists():
         "SECURITY.md",
         "docs/ARCHITECTURE.md",
         "docs/BUILDING.md",
+        "docs/LED_STATUS.md",
         "docs/ROADMAP.md",
         "docs/SETUP.md",
         "docs/TEST_PLAN.md",
@@ -89,3 +90,14 @@ def test_setup_portal_uses_esp2thread_branding():
     } <= {path.name for path in frontend.glob("*.html")}
     assert (frontend / "static" / "api.js").is_file()
     assert (frontend / "static" / "style.css").is_file()
+
+
+def test_xiao_status_led_is_active_low_gpio15():
+    source = (ROOT / "main" / "status_led.c").read_text(encoding="utf-8")
+    assert "#define STATUS_LED_GPIO GPIO_NUM_15" in source
+    assert "#define STATUS_LED_ON_LEVEL 0" in source
+    assert "#define STATUS_LED_OFF_LEVEL 1" in source
+    assert "LED_STATUS_WAITING_SETUP" in source
+    assert "LED_STATUS_WIFI_DISCONNECTED" in source
+    assert "LED_STATUS_THREAD_FORMING" in source
+    assert "LED_STATUS_READY" in source

@@ -19,6 +19,8 @@ Every push must check:
 ### Provisioning
 
 - Fresh flash exposes the setup access point.
+- Onboard LED patterns match setup, reconnecting, Thread-forming and ready
+  states without blocking the network tasks.
 - Wrong Wi-Fi credentials do not destroy an existing Thread dataset.
 - Correct credentials survive reboot.
 - Credentials are absent from normal serial logs.
@@ -60,4 +62,3 @@ Each hardware-tested release records firmware commit, board revision, ESP chip
 revision, flash size, Home Assistant version, Matter Server version, test
 device, result and any known limitation. Real network credentials are never
 recorded.
-

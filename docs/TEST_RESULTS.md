@@ -18,7 +18,7 @@ Results:
 | Dependency resolution | Pass | ESP-IDF resolved and locked nine dependencies |
 | Native ESP32-C6 build | Pass | `esp2thread.bin` generated successfully |
 | Partition layout | Pass | final partition ends at `0x400000` on 4 MB flash |
-| Application fit | Pass with warning | image `0x1b3540`, 1792 KiB slot, `0xcac0` bytes free |
+| Application fit | Pass with warning | LED-enabled image `0x1b4300`, 1792 KiB slot, `0xbd00` bytes free |
 | Web filesystem fit | Pass | 384 KiB SPIFFS image generated |
 | Hardware backup | Pass | complete 4,194,304-byte image saved outside Git and SHA-256 verified before flashing |
 | Flash write/verification | Pass | bootloader, partitions, OTA data, application and web filesystem all passed on-device hash verification on `COM3` |
@@ -38,6 +38,7 @@ Results:
 | Home Assistant REST integration | Pass | Home Assistant 2026.8.3 loaded the `otbr` entry using the local REST URL |
 | Home Assistant Thread import | Pass | Thread integration loaded one dataset sourced from `otbr` and marked it preferred; key material was not printed |
 | Automatic Home Assistant offer | Inconclusive | standard mDNS was visible, but automatic OTBR entry creation was not observed; manual URL setup passed |
+| Onboard status LED | Pass | GPIO15 active-low driver reported Wi-Fi disconnected at boot, Thread forming after IP at 17 seconds, and border-router ready at 53 seconds; REST remained `leader` and both Home Assistant integrations stayed loaded |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
 
 The application currently uses 97% of each OTA slot. This is acceptable for
