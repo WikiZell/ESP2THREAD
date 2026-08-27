@@ -107,6 +107,6 @@ direct_dependencies:
 - idf
 - ot_examples_common
 - protocol_examples_common
-manifest_hash: 3377adec5f2cf11ff42702ed798f0ab8ebd0546b67718feccaa25ee71a4c2d0e
+manifest_hash: 7e5447c7145fc7646869d2d0127ab54d7b09d3260216569786a355f6517e0689
 target: esp32c6
 version: 2.0.0

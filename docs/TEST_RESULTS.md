@@ -26,7 +26,10 @@ Results:
 | OpenThread initialization | Pass | native-radio OpenThread interface attached successfully with host connection mode `none` |
 | Wi-Fi/Thread coexistence | Pass | station plus SoftAP mode initialized with software coexistence enabled |
 | Setup access point | Pass | unique `ESP-ThreadBR-9EE5` SSID started with DHCP and setup portal at `http://192.168.4.1` |
-| Setup portal interaction | Pending | requires connecting a client to the temporary access point |
+| Setup portal interaction | Pass | Windows joined the temporary AP, received `192.168.4.2`, and loaded `http://192.168.4.1` with HTTP 200 |
+| ESP2THREAD portal branding | Pass | hardware-served title and heading identify ESP2THREAD; inherited M5Stack branding is absent |
+| Wi-Fi scan endpoint | Pass | `/scan` returned seven AP records containing only SSID, signal strength and authentication mode fields |
+| Complete management web UI image | Pass | all upstream status, network, topology, commissioning, address, tool and about pages are packaged with the branded setup page |
 | Home Assistant REST integration | Pending | requires running firmware |
 | mDNS discovery | Pending | requires running firmware and Home Assistant |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
@@ -37,3 +40,7 @@ is an explicit release requirement.
 
 The complete pre-flash backup is intentionally excluded from Git. A full flash
 image may contain credentials and must never be attached to an issue or release.
+
+The setup portal was tested without submitting home Wi-Fi credentials. That
+submission must be performed privately by the owner; test output must not print
+the password or the resulting Thread operational dataset.

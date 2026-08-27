@@ -63,3 +63,28 @@ def test_no_build_time_wifi_credentials():
     config = (ROOT / "sdkconfig.defaults").read_text(encoding="utf-8")
     assert "CONFIG_EXAMPLE_WIFI_SSID=" not in config
     assert "CONFIG_EXAMPLE_WIFI_PASSWORD=" not in config
+
+
+def test_setup_portal_uses_esp2thread_branding():
+    frontend = (
+        ROOT
+        / "components"
+        / "esp_ot_br_server"
+        / "frontend"
+    )
+    portal = (frontend / "wifi_configuration.html").read_text(encoding="utf-8")
+    assert "<title>ESP2THREAD - Wi-Fi Setup</title>" in portal
+    assert "<h1>ESP2THREAD</h1>" in portal
+    assert "M5Stack Thread Border Router" not in portal
+    assert {
+        "index.html",
+        "network.html",
+        "topology.html",
+        "commission.html",
+        "addresses.html",
+        "tools.html",
+        "about.html",
+        "wifi_configuration.html",
+    } <= {path.name for path in frontend.glob("*.html")}
+    assert (frontend / "static" / "api.js").is_file()
+    assert (frontend / "static" / "style.css").is_file()

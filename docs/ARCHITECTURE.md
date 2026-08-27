@@ -27,6 +27,15 @@ publish the standard Thread Border Agent MeshCoP service over mDNS. Testing
 must prove whether the current Home Assistant release offers the device
 automatically; the documented URL flow remains the compatibility fallback.
 
+## Web interface overlay
+
+ESP2THREAD keeps Espressif's border-router component pinned as an unmodified
+submodule. A project-local `esp_ot_br_server` component compiles the pinned
+upstream C sources while packaging a complete local copy of the web assets.
+This permits ESP2THREAD branding and setup guidance without making the upstream
+submodule dirty or dropping any management pages. Repository tests verify both
+the branding and the required page set.
+
 ## Device states
 
 The device has explicit states so first boot cannot silently create a second
@@ -70,4 +79,3 @@ ESP-IDF v5.5.4 is the initial supported toolchain. The Espressif Thread Border
 Router SDK is pinned as a submodule. Local integration code will remain small,
 documented and tested so upstream security and compatibility updates can be
 adopted deliberately.
-
