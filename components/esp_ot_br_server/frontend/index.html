@@ -97,6 +97,17 @@
 <div class="footer">Copyright &copy; 2026 Espressif Systems. All rights reserved.</div>
 <script src="/static/api.js"></script>
 <script>
+/* A fresh board must make an explicit Create/Join choice. Existing datasets
+   continue directly to the dashboard, including after firmware upgrades. */
+Promise.all([
+    fetch('/node/dataset/active', {headers: {'Accept': 'text/plain'}}),
+    fetch('/node/state').then(function(r) { return r.json(); })
+]).then(function(results) {
+    if (!results[0].ok && results[1] === 'disabled') {
+        window.location.replace('/setup.html');
+    }
+}).catch(function() { /* startup polling below will surface connectivity */ });
+
 function renderProperties(data) {
     if (!data || data.error || !data.result) return;
     var r = data.result;

@@ -1,0 +1,247 @@
+<!--
+  SPDX-FileCopyrightText: 2026 WikiZell
+  SPDX-License-Identifier: Apache-2.0
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ESP2THREAD - Thread Setup</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/favicon.ico">
+</head>
+<body>
+<nav class="nav"><a class="nav-brand" href="/setup.html">ESP2THREAD</a></nav>
+<main class="container" style="max-width:820px">
+    <h1 class="page-title">Choose this router's role</h1>
+    <p class="page-desc">Create the first Thread network, or copy the active dataset from Home Assistant to extend the same network with another ESP2THREAD.</p>
+
+    <div id="choice" class="grid grid-2 section">
+        <section class="card">
+            <div class="card-header">Create a new network</div>
+            <p class="text-muted" style="font-size:13px;margin-bottom:16px">Use this only for the first ESP2THREAD. Unique credentials are generated inside this browser and sent only in the local POST body.</p>
+            <div class="form-group">
+                <label class="form-label" for="networkName">Network name</label>
+                <input id="networkName" class="form-input" maxlength="16" value="ESP2THREAD">
+            </div>
+            <button class="btn btn-primary" onclick="createNetwork()">Create new Thread network</button>
+        </section>
+
+        <section class="card">
+            <div class="card-header">Join / extend a network</div>
+            <p class="text-muted" style="font-size:13px;margin-bottom:16px">Use this for every additional ESP. In Home Assistant, copy the preferred network's active operational dataset and paste it below.</p>
+            <div class="form-group">
+                <label class="form-label" for="dataset">Active operational dataset</label>
+                <textarea id="dataset" class="form-input mono" rows="5" autocomplete="off" spellcheck="false" placeholder="Hexadecimal dataset"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="joinNetwork()">Join existing Thread network</button>
+        </section>
+    </div>
+
+    <section id="configured" class="card hidden">
+        <div class="card-header">This router is configured</div>
+        <p id="configuredState" style="margin-bottom:14px">Checking Thread state...</p>
+        <p class="text-muted" style="font-size:13px;margin-bottom:16px">To extend this network, flash the same firmware on another ESP2THREAD, provision its Wi-Fi, then copy this active dataset and paste it into the additional router's Join box. Treat it like a password.</p>
+        <button class="btn btn-primary" onclick="copyDataset()">Copy dataset for another router</button>
+        <a class="btn btn-secondary" href="/index.html" style="margin-left:8px">Open dashboard</a>
+        <p id="copyStatus" style="font-size:13px;margin-top:12px"></p>
+        <div id="manualCopy" class="form-group hidden" style="margin-top:12px">
+            <label class="form-label" for="exportedDataset">Select all and copy, then reload this page to clear it</label>
+            <textarea id="exportedDataset" class="form-input mono" rows="4" readonly spellcheck="false"></textarea>
+        </div>
+    </section>
+
+    <section id="progress" class="card hidden" aria-live="polite">
+        <div class="card-header" id="progressTitle">Working</div>
+        <p id="progressMessage">Please wait...</p>
+        <div class="spinner" style="margin-top:16px"></div>
+    </section>
+    <div id="error" class="disabled-banner hidden" style="border-color:var(--danger);margin-top:16px"></div>
+</main>
+<div class="footer">ESP2THREAD &middot; WikiZell</div>
+<script>
+'use strict';
+
+function bytesToHex(bytes) {
+    return Array.prototype.map.call(bytes, function(value) {
+        return value.toString(16).padStart(2, '0');
+    }).join('');
+}
+
+function randomBytes(length) {
+    var bytes = new Uint8Array(length);
+    window.crypto.getRandomValues(bytes);
+    return bytes;
+}
+
+function setWorking(title, message) {
+    document.getElementById('choice').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('progress').classList.remove('hidden');
+    document.getElementById('progressTitle').textContent = title;
+    document.getElementById('progressMessage').textContent = message;
+}
+
+function fail(message) {
+    document.getElementById('choice').classList.remove('hidden');
+    document.getElementById('progress').classList.add('hidden');
+    var error = document.getElementById('error');
+    error.textContent = message;
+    error.classList.remove('hidden');
+}
+
+function pollAttached() {
+    var attempts = 0;
+    var timer = setInterval(function() {
+        attempts++;
+        fetch('/node/state').then(function(response) { return response.json(); }).then(function(role) {
+            document.getElementById('progressMessage').textContent = 'Thread state: ' + role;
+            if (role === 'child' || role === 'router' || role === 'leader') {
+                clearInterval(timer);
+                window.location.replace('/index.html');
+            } else if (attempts >= 35) {
+                clearInterval(timer);
+                fail('The dataset was saved, but this router did not attach within 70 seconds. Check radio range and try again.');
+            }
+        }).catch(function() {
+            if (attempts >= 35) {
+                clearInterval(timer);
+                fail('The router stopped responding while attaching.');
+            }
+        });
+    }, 2000);
+}
+
+function createNetwork() {
+    var name = document.getElementById('networkName').value.trim();
+    if (!/^[A-Za-z0-9_-]{1,16}$/.test(name)) {
+        fail('Use 1-16 letters, numbers, hyphens or underscores for the network name.');
+        return;
+    }
+
+    var key = randomBytes(16);
+    var extPan = randomBytes(8);
+    var pan = randomBytes(2);
+    var prefix = randomBytes(5);
+    var passphrase = bytesToHex(randomBytes(16));
+    var panId = ((pan[0] << 8) | pan[1]) & 0xfffe;
+    if (panId === 0) panId = 1;
+    var data = {
+        networkName: name,
+        networkKey: bytesToHex(key),
+        panId: '0x' + panId.toString(16).padStart(4, '0'),
+        channel: 15,
+        extPanId: bytesToHex(extPan),
+        passphrase: passphrase,
+        prefix: 'fd' + prefix[0].toString(16).padStart(2, '0') + ':' +
+                ((prefix[1] << 8) | prefix[2]).toString(16) + ':' +
+                ((prefix[3] << 8) | prefix[4]).toString(16) + '::',
+        defaultRoute: 1
+    };
+
+    key.fill(0); extPan.fill(0); pan.fill(0); prefix.fill(0);
+    setWorking('Creating Thread network', 'Generating and saving a unique active dataset...');
+    fetch('/form_network', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(function(response) { return response.json(); }).then(function(result) {
+        data.networkKey = ''; data.extPanId = ''; data.passphrase = ''; data.prefix = '';
+        if (result.error) throw new Error(result.message || 'Creation failed');
+        pollAttached();
+    }).catch(function(error) {
+        data.networkKey = ''; data.extPanId = ''; data.passphrase = ''; data.prefix = '';
+        fail('Could not create the network: ' + error.message);
+    });
+}
+
+function joinNetwork() {
+    var field = document.getElementById('dataset');
+    var dataset = field.value.replace(/\s+/g, '').toLowerCase();
+    field.value = '';
+    if (!/^[0-9a-f]+$/.test(dataset) || dataset.length % 2 !== 0 || dataset.length > 508) {
+        dataset = '';
+        fail('Enter a valid even-length hexadecimal active operational dataset (maximum 254 bytes).');
+        return;
+    }
+
+    setWorking('Joining Thread network', 'Validating and saving the active dataset...');
+    fetch('/node/dataset/active', {
+        method: 'PUT',
+        headers: {'Content-Type': 'text/plain'},
+        body: dataset
+    }).then(function(response) {
+        dataset = '';
+        if (!response.ok) throw new Error('Dataset rejected by OpenThread');
+        return fetch('/node/state', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify('enable')
+        });
+    }).then(function(response) {
+        if (!response.ok) throw new Error('Dataset saved, but Thread could not be enabled');
+        pollAttached();
+    }).catch(function(error) {
+        dataset = '';
+        fail('Could not join the network: ' + error.message);
+    });
+}
+
+function showExistingConfiguration() {
+    document.getElementById('choice').classList.add('hidden');
+    document.getElementById('configured').classList.remove('hidden');
+    fetch('/node/state').then(function(response) { return response.json(); }).then(function(role) {
+        document.getElementById('configuredState').textContent = 'Thread role: ' + role;
+    }).catch(function() {
+        document.getElementById('configuredState').textContent = 'Thread dataset is saved.';
+    });
+}
+
+function copyDataset() {
+    var status = document.getElementById('copyStatus');
+    status.textContent = 'Reading dataset locally...';
+    fetch('/node/dataset/active', {headers: {'Accept': 'text/plain'}}).then(function(response) {
+        if (!response.ok) throw new Error('Dataset is not available');
+        return response.text();
+    }).then(function(dataset) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(dataset).then(function() {
+                dataset = '';
+                status.textContent = 'Copied. Paste it only into the additional ESP2THREAD setup page.';
+                status.style.color = 'var(--success)';
+            }).catch(function() {
+                showManualDataset(dataset, status);
+                dataset = '';
+            });
+        }
+
+        /* Clipboard API normally requires HTTPS. The router is local HTTP, so
+           provide an explicit manual-copy fallback without browser storage. */
+        showManualDataset(dataset, status);
+        dataset = '';
+    }).catch(function(error) {
+        status.textContent = 'Could not copy the dataset: ' + error.message;
+        status.style.color = 'var(--danger)';
+    });
+}
+
+function showManualDataset(dataset, status) {
+    var manual = document.getElementById('manualCopy');
+    var output = document.getElementById('exportedDataset');
+    output.value = dataset;
+    manual.classList.remove('hidden');
+    output.focus();
+    output.select();
+    status.textContent = 'Automatic clipboard access is unavailable on local HTTP. Copy the selected value manually.';
+    status.style.color = 'var(--primary-hover)';
+}
+
+/* Dataset presence is the persistent role selection. A commissioned router
+   shows a safe handoff action; a fresh router shows Create and Join. */
+fetch('/node/dataset/active', {headers: {'Accept': 'text/plain'}}).then(function(response) {
+    if (response.ok) showExistingConfiguration();
+}).catch(function() { /* fresh/offline state keeps the role choices visible */ });
+</script>
+</body>
+</html>

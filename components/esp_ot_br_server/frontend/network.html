@@ -59,7 +59,7 @@
                 <div class="form-group">
                     <label class="form-label">Network Key * (32 hex chars)</label>
                     <div class="input-toggle-wrap">
-                        <input class="form-input" name="networkKey" type="password" value="00112233445566778899aabbccddeeff" required>
+                        <input class="form-input" name="networkKey" type="password" autocomplete="new-password" placeholder="Generate a unique 32-character key" required>
                         <button type="button" class="toggle-vis" onclick="toggleVis(this)" title="Show/Hide">&#x1F441;</button>
                     </div>
                 </div>
@@ -80,11 +80,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Extended PAN ID (16 hex chars)</label>
-                            <input class="form-input" name="extPanId" type="text" value="1111111122222222">
+                            <input class="form-input" name="extPanId" type="text" placeholder="Unique 16-character value">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Passphrase</label>
-                            <input class="form-input" name="passphrase" type="text" value="j01Nme">
+                            <input class="form-input" name="passphrase" type="password" autocomplete="new-password" placeholder="Unique commissioner passphrase">
                         </div>
                     </div>
                     <div class="form-group">
@@ -123,7 +123,7 @@
             <div class="form-group" id="joinKeyGroup">
                 <label class="form-label">Network Key (32 hex chars)</label>
                 <div class="input-toggle-wrap">
-                    <input class="form-input" name="networkKey" type="password" value="00112233445566778899aabbccddeeff">
+                    <input class="form-input" name="networkKey" type="password" autocomplete="new-password" placeholder="32-character key from the existing network">
                     <button type="button" class="toggle-vis" onclick="toggleVis(this)" title="Show/Hide">&#x1F441;</button>
                 </div>
             </div>

@@ -1,0 +1,25 @@
+menu "ESP2THREAD Border Router"
+
+    config ESP_BR_BOARD_STANDALONE
+        bool "Standalone ESP2THREAD board"
+        default y
+
+    config OPENTHREAD_BR_AUTO_START
+        bool "Start Wi-Fi and the border-router services automatically"
+        default y
+        help
+            Connect the Wi-Fi backbone automatically. A saved Thread dataset
+            is started, while a fresh board waits for an explicit Create or
+            Join choice.
+
+    config OPENTHREAD_BR_START_WEB
+        bool "Enable the border-router REST API and web UI"
+        select OPENTHREAD_COMMISSIONER
+        select OPENTHREAD_JOINER
+        default y
+
+    config OPENTHREAD_BR_SOFTAP_SETUP
+        bool "Enable first-boot SoftAP Wi-Fi setup"
+        default y
+
+endmenu

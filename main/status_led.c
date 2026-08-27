@@ -18,6 +18,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "nvs.h"
+#include "openthread/dataset.h"
 #include "openthread/instance.h"
 #include "openthread/thread.h"
 
@@ -33,6 +34,7 @@ static volatile bool s_wifi_has_ip;
 typedef enum {
     LED_STATUS_WAITING_SETUP,
     LED_STATUS_WIFI_DISCONNECTED,
+    LED_STATUS_THREAD_SELECTION,
     LED_STATUS_THREAD_FORMING,
     LED_STATUS_READY,
 } led_status_t;
@@ -69,6 +71,20 @@ static bool thread_is_ready(void)
     return role == OT_DEVICE_ROLE_CHILD || role == OT_DEVICE_ROLE_ROUTER || role == OT_DEVICE_ROLE_LEADER;
 }
 
+static bool thread_has_dataset(void)
+{
+    otInstance *instance = esp_openthread_get_instance();
+    if (instance == NULL) {
+        return true;
+    }
+
+    otOperationalDatasetTlvs dataset;
+    esp_openthread_lock_acquire(portMAX_DELAY);
+    const bool present = otDatasetGetActiveTlvs(instance, &dataset) == OT_ERROR_NONE;
+    esp_openthread_lock_release();
+    return present;
+}
+
 static led_status_t get_status(bool wifi_configured)
 {
     if (!wifi_configured) {
@@ -76,6 +92,9 @@ static led_status_t get_status(bool wifi_configured)
     }
     if (!s_wifi_has_ip) {
         return LED_STATUS_WIFI_DISCONNECTED;
+    }
+    if (!thread_has_dataset()) {
+        return LED_STATUS_THREAD_SELECTION;
     }
     return thread_is_ready() ? LED_STATUS_READY : LED_STATUS_THREAD_FORMING;
 }
@@ -87,6 +106,8 @@ static const char *status_name(led_status_t status)
         return "waiting for Wi-Fi setup";
     case LED_STATUS_WIFI_DISCONNECTED:
         return "Wi-Fi disconnected";
+    case LED_STATUS_THREAD_SELECTION:
+        return "waiting for Create or Join selection";
     case LED_STATUS_THREAD_FORMING:
         return "Thread forming";
     case LED_STATUS_READY:
@@ -103,6 +124,8 @@ static bool led_on_for_pattern(led_status_t status, unsigned phase)
         return phase == 0;
     case LED_STATUS_WIFI_DISCONNECTED:
         return phase == 0 || phase == 2;
+    case LED_STATUS_THREAD_SELECTION:
+        return phase == 0 || phase == 2 || phase == 4;
     case LED_STATUS_THREAD_FORMING:
         return (phase / 2) % 2 == 0;
     case LED_STATUS_READY:

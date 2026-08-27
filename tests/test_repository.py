@@ -92,6 +92,40 @@ def test_setup_portal_uses_esp2thread_branding():
     assert (frontend / "static" / "style.css").is_file()
 
 
+def test_fresh_router_requires_explicit_thread_role_selection():
+    router = (
+        ROOT
+        / "components"
+        / "thread_border_router"
+        / "src"
+        / "border_router_launch.c"
+    ).read_text(encoding="utf-8")
+    setup = (
+        ROOT
+        / "components"
+        / "esp_ot_br_server"
+        / "frontend"
+        / "setup.html"
+    ).read_text(encoding="utf-8")
+
+    assert "otDatasetCreateNewNetwork" not in router
+    assert "waiting for explicit Create or Join selection" in router
+    assert "Create new Thread network" in setup
+    assert "Join existing Thread network" in setup
+    assert "Content-Type': 'text/plain'" in setup
+    assert "window.crypto.getRandomValues" in setup
+    assert "Copy dataset for another router" in setup
+    assert "sessionStorage.setItem" not in setup
+    assert "Automatic clipboard access is unavailable on local HTTP" in setup
+
+
+def test_management_ui_has_no_shared_example_thread_key():
+    frontend = ROOT / "components" / "esp_ot_br_server" / "frontend"
+    example_key = "00112233445566778899aabbccddeeff"
+    for page in frontend.glob("*.html"):
+        assert example_key not in page.read_text(encoding="utf-8"), page
+
+
 def test_xiao_status_led_is_active_low_gpio15():
     source = (ROOT / "main" / "status_led.c").read_text(encoding="utf-8")
     assert "#define STATUS_LED_GPIO GPIO_NUM_15" in source
@@ -99,5 +133,6 @@ def test_xiao_status_led_is_active_low_gpio15():
     assert "#define STATUS_LED_OFF_LEVEL 1" in source
     assert "LED_STATUS_WAITING_SETUP" in source
     assert "LED_STATUS_WIFI_DISCONNECTED" in source
+    assert "LED_STATUS_THREAD_SELECTION" in source
     assert "LED_STATUS_THREAD_FORMING" in source
     assert "LED_STATUS_READY" in source

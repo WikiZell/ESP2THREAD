@@ -29,12 +29,13 @@ automatically; the documented URL flow remains the compatibility fallback.
 
 ## Web interface overlay
 
-ESP2THREAD keeps Espressif's border-router component pinned as an unmodified
+ESP2THREAD keeps Espressif's border-router SDK pinned as an unmodified
 submodule. A project-local `esp_ot_br_server` component compiles the pinned
-upstream C sources while packaging a complete local copy of the web assets.
-This permits ESP2THREAD branding and setup guidance without making the upstream
-submodule dirty or dropping any management pages. Repository tests verify both
-the branding and the required page set.
+upstream REST server while packaging a complete local copy of the web assets.
+A small local `thread_border_router` launch component replaces upstream's
+automatic dataset creation: it starts a saved dataset, but leaves a fresh unit
+uncommissioned until the setup page performs Create or Join. Repository tests
+verify this invariant, the branding and the required page set.
 
 ## Device states
 
@@ -69,9 +70,11 @@ The detected target has 4 MB flash. The initial partition design reserves:
 - two application slots for rollback-capable firmware updates
 - a filesystem partition for the setup and management interface
 
-Thread dataset export is always treated as secret material. It is displayed or
-downloaded only after an explicit local user action and is never written to
-ordinary logs.
+Thread dataset export is always treated as secret material. It is copied only
+after an explicit local user action, transported in request bodies rather than
+URLs, and never written to ordinary logs. Dataset presence itself is the
+persistent role-selection state: no parallel application copy of the secret is
+stored.
 
 ## Upstream strategy
 

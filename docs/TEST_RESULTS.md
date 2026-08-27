@@ -42,6 +42,10 @@ Results:
 | Production footprint configuration | Pass | unused iPerf, mDNS-console, SRP-client and DNS-client features disabled; image reduced from `0x1b4300` to `0x1a8e80` and OTA-slot headroom increased from `0xbd00` to `0x17180` bytes |
 | Footprint firmware hardware regression | Pass | flash hashes verified on `COM3` without writing the NVS partition; saved Wi-Fi identity returned immediately and Thread progressed from `detached` to `leader` after 15 seconds of polling |
 | Home Assistant regression after footprint build | Pass | Home Assistant 2026.8.3 continued to report the OpenThread Border Router, Thread and Matter config entries as `loaded` |
+| Explicit Create/Join foundation | Pass | a fresh-board code path no longer calls automatic dataset creation; the hardware-served setup page offers Create and full-dataset Join, with dataset import in an HTTP body rather than a URL |
+| Existing-network upgrade path | Pass | Create/Join firmware flashed without writing NVS, preserved the commissioned dataset and returned the test unit to `leader`; the normal root URL remained on the dashboard |
+| Setup-page browser QA | Pass | hardware-served page identity, meaningful DOM, Create/Join controls, invalid-dataset rejection and desktop layout passed; no browser console warning or error was observed |
+| Additional-router join and failover | Pending | requires a second XIAO ESP32-C6; do not claim multi-router validation from the single-board test |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
 
 The application currently uses 95% of each OTA slot. The first conservative

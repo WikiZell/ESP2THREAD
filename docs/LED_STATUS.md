@@ -8,6 +8,7 @@ network state only; it never starts, stops or reconfigures Wi-Fi or OpenThread.
 | --- | --- |
 | One short pulse every two seconds | Waiting for first Wi-Fi setup |
 | Two short pulses every two seconds | Saved Wi-Fi is disconnected or reconnecting |
+| Three short pulses every two seconds | Wi-Fi is ready; choose **Create** or **Join** in the Thread setup page |
 | Fast blink | Wi-Fi has an IP address and the Thread partition is forming |
 | Solid on | Border router is ready as a Thread child, router or leader |
 
@@ -24,4 +25,5 @@ can extend this period.
   callback.
 - Event callbacks only update the cached Wi-Fi/IP state.
 - Thread role is read under the ESP-IDF OpenThread lock.
-- No credential, dataset or network-key value is read or logged.
+- Only the presence of an active dataset is checked; no credential, dataset or
+  network-key value is logged.

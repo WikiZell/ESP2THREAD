@@ -36,4 +36,3 @@
 No release is labelled stable until it passes the hardware matrix in
 `docs/TEST_PLAN.md`, including Matter-over-Thread commissioning through Home
 Assistant and a sustained coexistence test.
-
