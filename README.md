@@ -48,8 +48,8 @@ preferred. A first production-footprint pass also passed on-device regression
 testing and leaves about 94 KiB free in each OTA slot. Explicit Create/Join
 selection, secure-body dataset import, a second-router join, two loaded Home
 Assistant OTBR entries and bidirectional border-router failover now pass on two
-physical units. Matter-over-Thread commissioning still requires a confirmed
-compatible end device, so the first published image is a release candidate.
+physical units. Home Assistant Matter commissioning with end devices has now
+also been confirmed, completing the hardware gates for the first stable release.
 
 Follow the [hardware-tested setup guide](docs/SETUP.md), and see the
 [roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md) and

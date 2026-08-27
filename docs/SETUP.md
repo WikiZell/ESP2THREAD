@@ -102,5 +102,6 @@ unit normally, then hold BOOT after it is running.
   disabled until it can require physical authorization and signed images.
 - The ESP32-C6 shares one RF path between Wi-Fi and Thread. Placement and 2.4 GHz
   interference affect formation time and throughput.
-- Matter-over-Thread commissioning remains pending until a confirmed compatible
-  end device and its Matter setup code are available.
+- Matter device commissioning through Home Assistant has passed. Exact end-device
+  compatibility still depends on the product label: Zigbee-only devices require
+  a separate Zigbee coordinator and cannot join ESP2THREAD.

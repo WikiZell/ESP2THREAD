@@ -59,7 +59,8 @@ Results:
 | Release-candidate automated gates | Pass | 13 repository/security/documentation tests, link checks, whitespace checks and full ESP-IDF 5.5.4 build pass for version `0.1.0-rc.1` |
 | Sequential release-candidate update | Pass | COM3 and COM4 were updated one at a time without writing NVS; both preserved Wi-Fi and dataset, report version `0.1.0-rc.1`, and restored as `leader` plus `router` |
 | Release-candidate browser QA | Pass | branded About page, embedded version, redacted-diagnostics control and dashboard without displayed PSKc passed; zero browser warning/error messages |
-| Matter-over-Thread commissioning | Pending | requires a supported test device |
+| Matter device commissioning | Pass (user confirmed) | end devices paired successfully through Home Assistant after the preferred two-router Thread network was synchronized; exact product models and setup codes were not recorded |
+| Stable `v0.1.0` hardware regression | Pass | full ESP-IDF build and sequential verified flashes completed without writing NVS; both routers report `0.1.0` and restored as `leader` plus `router` |
 
 The application currently uses about 95% of each OTA slot. After multi-unit
 identity and recovery support, `esp2thread.bin` is `0x1a9b10` bytes and leaves

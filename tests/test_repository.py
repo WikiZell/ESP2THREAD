@@ -178,7 +178,7 @@ def test_release_version_and_redacted_support_bundle():
         ROOT / "components" / "esp_ot_br_server" / "frontend" / "index.html"
     ).read_text(encoding="utf-8")
 
-    assert 'set(PROJECT_VER "0.1.0-rc.1")' in cmake
+    assert 'set(PROJECT_VER "0.1.0")' in cmake
     assert "copyRedactedDiagnostics" in about
     assert "Thread datasets, keys, PSKc" in about
     assert "OpenThread:PSKc" not in dashboard
