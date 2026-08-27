@@ -17,16 +17,16 @@
 
     <div class="about-hero">
         <div class="about-logo">
-            <img src="/favicon.ico" width="64" height="64" alt="Espressif">
+            <img src="/favicon.ico" width="64" height="64" alt="ESP2THREAD">
         </div>
-        <h1>Espressif Thread Border Router</h1>
-        <p>Built with ESP-IDF &amp; OpenThread by Espressif Systems</p>
+        <h1>ESP2THREAD</h1>
+        <p>WikiZell firmware built with ESP-IDF, Espressif Thread BR and OpenThread</p>
     </div>
 
     <h2 class="section-title">Firmware Information</h2>
     <div class="grid grid-2 section">
         <div class="card">
-            <div class="card-header">ESP Thread BR</div>
+            <div class="card-header">ESP2THREAD</div>
             <div class="info-row">
                 <span class="info-label">App Version</span>
                 <span class="info-value" id="ab-appver">-</span>
@@ -71,12 +71,22 @@
         </div>
     </div>
 
+    <h2 class="section-title">Support</h2>
+    <div class="card section">
+        <p class="text-muted" style="font-size:13px;margin-bottom:16px">
+            Copy a redacted diagnostic summary for an issue report. It excludes
+            Thread datasets, keys, PSKc, network identifiers and IP addresses.
+        </p>
+        <button class="btn btn-primary" id="copyDiagnostics" onclick="copyRedactedDiagnostics()">Copy redacted diagnostics</button>
+        <textarea id="diagnosticsFallback" class="form-input mono hidden" rows="10" readonly style="margin-top:16px"></textarea>
+    </div>
+
     <h2 class="section-title">Resources</h2>
     <div class="card section">
         <ul class="link-list">
             <li>
-                <span class="link-label">Espressif Home</span>
-                <a class="link-url" href="https://www.espressif.com" target="_blank" rel="noopener">espressif.com</a>
+                <span class="link-label">ESP2THREAD source and releases</span>
+                <a class="link-url" href="https://github.com/WikiZell/ESP2THREAD" target="_blank" rel="noopener">github.com/WikiZell/ESP2THREAD</a>
             </li>
             <li>
                 <span class="link-label">ESP Thread BR on GitHub</span>
@@ -102,7 +112,7 @@
     </div>
 
 </div>
-<div class="footer">Copyright &copy; 2026 Espressif Systems. All rights reserved.</div>
+<div class="footer">ESP2THREAD &middot; WikiZell &middot; Apache-2.0</div>
 <script src="/static/api.js"></script>
 <script>
 function renderAbout(data) {
@@ -116,6 +126,52 @@ function renderAbout(data) {
     document.getElementById('ab-otapi').textContent = r['OpenThread:Version API'] || '-';
     document.getElementById('ab-rcp').textContent = r['RCP:Version'] || '-';
     document.getElementById('ab-eui').textContent = r['RCP:EUI64'] || '-';
+}
+
+function buildRedactedDiagnostics(data) {
+    var r = data && data.result ? data.result : {};
+    return JSON.stringify({
+        product: 'ESP2THREAD',
+        hostname: window.location.hostname,
+        app_version: r['App:Version'] || 'unknown',
+        project: r['App:ProjectName'] || 'unknown',
+        compiled: r['App:CompileTime'] || 'unknown',
+        idf_version: r['IDF:Version'] || 'unknown',
+        openthread_version: r['OpenThread:Version'] || 'unknown',
+        openthread_api: r['OpenThread:Version API'] || 'unknown',
+        thread_role: r['Thread:Role'] || 'unknown',
+        uptime: r['System:Uptime'] || 'unknown',
+        free_heap: r['System:FreeHeap'] || 'unknown'
+    }, null, 2);
+}
+
+function showDiagnosticsFallback(text) {
+    var output = document.getElementById('diagnosticsFallback');
+    output.value = text;
+    output.classList.remove('hidden');
+    output.focus();
+    output.select();
+    showToast('Clipboard blocked; copy the selected redacted text', 'info');
+}
+
+function copyRedactedDiagnostics() {
+    var button = document.getElementById('copyDiagnostics');
+    button.disabled = true;
+    apiGet('/get_properties').then(function(data) {
+        var text = buildRedactedDiagnostics(data);
+        if (navigator.clipboard && window.isSecureContext) {
+            return navigator.clipboard.writeText(text).then(function() {
+                showToast('Redacted diagnostics copied', 'success');
+            }).catch(function() {
+                showDiagnosticsFallback(text);
+            });
+        }
+        showDiagnosticsFallback(text);
+    }).catch(function() {
+        showToast('Could not read device diagnostics', 'error');
+    }).then(function() {
+        button.disabled = false;
+    });
 }
 renderAbout(getCached('/get_properties'));
 apiGet('/get_properties').then(renderAbout).catch(function() {

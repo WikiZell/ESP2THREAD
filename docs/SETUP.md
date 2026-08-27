@@ -94,13 +94,13 @@ unit normally, then hold BOOT after it is running.
 
 ## Current limitations
 
-- The Create/Join workflow and existing-network upgrade path passed on the
-  first hardware unit. A second identical board is still required to prove the
-  complete multi-router handoff and failover behavior.
+- The Create/Join workflow, second-router dataset handoff and failover passed
+  on two physical XIAO ESP32-C6 units.
 - Dataset copy currently relies on the local unauthenticated Espressif REST
   service. Use ESP2THREAD only on a trusted home LAN; authenticated management
-  is required before a stable release.
+  is the compatibility boundary for this release. Web firmware upload remains
+  disabled until it can require physical authorization and signed images.
 - The ESP32-C6 shares one RF path between Wi-Fi and Thread. Placement and 2.4 GHz
   interference affect formation time and throughput.
-- Matter-over-Thread commissioning and multi-router failover have not passed
-  hardware testing yet.
+- Matter-over-Thread commissioning remains pending until a confirmed compatible
+  end device and its Matter setup code are available.

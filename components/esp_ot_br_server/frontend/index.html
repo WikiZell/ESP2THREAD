@@ -80,10 +80,6 @@
                     <span class="info-label">Border Agent ID</span>
                     <span class="info-value mono" id="p-baid">-</span>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">PSKc</span>
-                    <span class="info-value mono" id="p-pskc">-</span>
-                </div>
             </div>
         </div>
     </div>
@@ -123,7 +119,6 @@ function renderProperties(data) {
     document.getElementById('p-otver').textContent = r['OpenThread:Version'] || '-';
     document.getElementById('p-eui64').textContent = r['RCP:EUI64'] || '-';
     document.getElementById('p-baid').textContent = r['Network:BorderAgentID'] || '-';
-    document.getElementById('p-pskc').textContent = r['OpenThread:PSKc'] || '-';
 }
 
 function renderAddresses(data) {

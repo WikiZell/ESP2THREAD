@@ -17,6 +17,8 @@
 
 ## Milestone 2: additional routers
 
+Status: hardware-validated on two XIAO ESP32-C6 units on 2026-08-27.
+
 - Explicit **Join existing Thread network** action using an imported dataset.
 - Safe dataset validation and redaction.
 - Verify two ESP2THREAD units attach to the same partition and both advertise
@@ -24,6 +26,9 @@
 - Recovery behavior when one router loses power or Wi-Fi.
 
 ## Milestone 3: appliance experience
+
+Status: release-candidate scope complete except signed web OTA and final
+Matter-over-Thread device commissioning.
 
 - Standard mDNS discovery validated with Home Assistant.
 - Friendly hostname and stable local identity.

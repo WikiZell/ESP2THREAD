@@ -46,13 +46,18 @@ OpenThread REST API, MeshCoP advertisement and Home Assistant dataset import
 have passed hardware tests. Home Assistant marks the imported network
 preferred. A first production-footprint pass also passed on-device regression
 testing and leaves about 94 KiB free in each OTA slot. Explicit Create/Join
-selection, secure-body dataset import, and the existing-network upgrade path
-now pass on the first hardware unit. A second router and Matter commissioning
-remain unverified, so no release image is published.
+selection, secure-body dataset import, a second-router join, two loaded Home
+Assistant OTBR entries and bidirectional border-router failover now pass on two
+physical units. Matter-over-Thread commissioning still requires a confirmed
+compatible end device, so the first published image is a release candidate.
 
 Follow the [hardware-tested setup guide](docs/SETUP.md), and see the
 [roadmap](docs/ROADMAP.md), [test plan](docs/TEST_PLAN.md) and
 [current results](docs/TEST_RESULTS.md).
+
+For day-to-day use, follow the dedicated [Home Assistant guide](docs/HOME_ASSISTANT.md),
+[device and IKEA compatibility guide](docs/DEVICES.md), and
+[firmware update guide](docs/UPDATING.md).
 
 The onboard LED provides local status without a serial console. See the
 [status LED reference](docs/LED_STATUS.md) for its patterns.

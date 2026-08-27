@@ -45,12 +45,19 @@ Results:
 | Explicit Create/Join foundation | Pass | a fresh-board code path no longer calls automatic dataset creation; the hardware-served setup page offers Create and full-dataset Join, with dataset import in an HTTP body rather than a URL |
 | Existing-network upgrade path | Pass | Create/Join firmware flashed without writing NVS, preserved the commissioned dataset and returned the test unit to `leader`; the normal root URL remained on the dashboard |
 | Setup-page browser QA | Pass | hardware-served page identity, meaningful DOM, Create/Join controls, invalid-dataset rejection and desktop layout passed; no browser console warning or error was observed |
-| Multi-unit identity build | Pass | base-MAC-derived mDNS instance, hostname and station-netif hostname compile in the production image; 12 repository tests pass |
+| Multi-unit identity build | Pass | base-MAC-derived mDNS instance, hostname and station-netif hostname compile in the production image |
 | Unique-name hardware regression | Pass | existing unit preserved NVS, resolved at `esp2thread-8f9ee4.local`, served HTTP 200 and returned from `detached` to `leader` |
 | Unique-name browser QA | Pass | dashboard and configured-router setup page loaded through the new `.local` name with zero browser warnings or errors; dataset-copy control was not activated |
 | Factory-reset safety path | Partial pass | normal boot with GPIO9 released preserved Wi-Fi and Thread state; destructive eight-second erase and short-press cancellation intentionally remain untested on the commissioned unit |
 | Home Assistant identity regression | Pass | OpenThread Border Router, Thread and Matter config entries all remained `loaded` after the hostname firmware update |
-| Additional-router join and failover | Pending | requires a second XIAO ESP32-C6; do not claim multi-router validation from the single-board test |
+| Second-unit hardware identification | Pass | COM4 is a second XIAO ESP32-C6FH4 revision 0.2 with 4 MB flash and base-MAC suffix `8e88ec`; its original 4 MB flash was privately backed up and SHA-256 verified before installation |
+| Fresh second-unit provisioning | Pass | clean NVS boot produced unique `ESP-ThreadBR-88ED`, branded setup portal at `192.168.4.1`, one-pulse LED status and stable LAN hostname `esp2thread-8e88ec.local` |
+| Additional-router dataset join | Pass | dataset moved directly in memory from `esp2thread-8f9ee4` to `esp2thread-8e88ec` without log, URL or file exposure; exact dataset equality was checked privately and the second unit attached as `child` |
+| Two-router Home Assistant integration | Pass | Home Assistant 2026.8.3 reports two OpenThread Border Router entries, Thread and Matter as `loaded` |
+| Bidirectional border-router failover | Pass | with COM3 offline, COM4 progressed through `detached` to `leader`; with COM4 offline, COM3 remained attached and became `leader` after about 50 seconds; both restored as `leader` plus `child` |
+| Release-candidate automated gates | Pass | 13 repository/security/documentation tests, link checks, whitespace checks and full ESP-IDF 5.5.4 build pass for version `0.1.0-rc.1` |
+| Sequential release-candidate update | Pass | COM3 and COM4 were updated one at a time without writing NVS; both preserved Wi-Fi and dataset, report version `0.1.0-rc.1`, and restored as `leader` plus `router` |
+| Release-candidate browser QA | Pass | branded About page, embedded version, redacted-diagnostics control and dashboard without displayed PSKc passed; zero browser warning/error messages |
 | Matter-over-Thread commissioning | Pending | requires a supported test device |
 
 The application currently uses about 95% of each OTA slot. After multi-unit

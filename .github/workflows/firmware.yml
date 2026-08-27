@@ -5,7 +5,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   repository-tests:
@@ -32,4 +32,30 @@ jobs:
           target: esp32c6
           path: .
           command: idf.py build
-
+      - name: Package credential-free firmware
+        run: |
+          python -m pip install "esptool==4.12.0"
+          mkdir -p release
+          cp build/bootloader/bootloader.bin release/bootloader.bin
+          cp build/partition_table/partition-table.bin release/partition-table.bin
+          cp build/ota_data_initial.bin release/ota-data-initial.bin
+          cp build/esp2thread.bin release/esp2thread.bin
+          cp build/web_storage.bin release/web-storage.bin
+          python -m esptool --chip esp32c6 merge_bin \
+            --flash_mode dio --flash_freq 80m --flash_size 4MB \
+            -o release/ESP2THREAD-factory.bin \
+            0x0 release/bootloader.bin \
+            0x8000 release/partition-table.bin \
+            0xf000 release/ota-data-initial.bin \
+            0x20000 release/esp2thread.bin \
+            0x3a0000 release/web-storage.bin
+          cd release
+          sha256sum *.bin > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ESP2THREAD-firmware
+          path: release/*
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: release/*

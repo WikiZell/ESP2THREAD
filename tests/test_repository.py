@@ -11,11 +11,14 @@ def test_required_documentation_exists():
         "SECURITY.md",
         "docs/ARCHITECTURE.md",
         "docs/BUILDING.md",
+        "docs/DEVICES.md",
+        "docs/HOME_ASSISTANT.md",
         "docs/LED_STATUS.md",
         "docs/ROADMAP.md",
         "docs/SETUP.md",
         "docs/TEST_PLAN.md",
         "docs/TEST_RESULTS.md",
+        "docs/UPDATING.md",
         "pytest.ini",
     ]
     assert all((ROOT / path).is_file() for path in required)
@@ -164,3 +167,19 @@ def test_factory_reset_requires_physical_eight_second_hold():
     assert "nvs_flash_erase()" in source
     assert "FACTORY_RESET_RTC_MAGIC" in source
     assert "esp_restart()" in source
+
+
+def test_release_version_and_redacted_support_bundle():
+    cmake = (ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
+    about = (
+        ROOT / "components" / "esp_ot_br_server" / "frontend" / "about.html"
+    ).read_text(encoding="utf-8")
+    dashboard = (
+        ROOT / "components" / "esp_ot_br_server" / "frontend" / "index.html"
+    ).read_text(encoding="utf-8")
+
+    assert 'set(PROJECT_VER "0.1.0-rc.1")' in cmake
+    assert "copyRedactedDiagnostics" in about
+    assert "Thread datasets, keys, PSKc" in about
+    assert "OpenThread:PSKc" not in dashboard
+    assert "p-pskc" not in dashboard
